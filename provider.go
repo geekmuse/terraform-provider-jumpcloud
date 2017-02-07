@@ -2,8 +2,9 @@
 package main
 
 import (
+    "strings"
     "github.com/hashicorp/terraform/helper/schema"
-    "github.com/TheJumpCloud/jcapi"
+    "github.com/geekmuse/jcapi"
 )
 
 const (
@@ -36,11 +37,28 @@ func Provider() *schema.Provider {
                     },
                     "password":  &schema.Schema{
                         Type:       schema.TypeString,
-                        Required:   true,
+                        Required:   false,
+                        Optional:   true,
                     },
                     "sudo":  &schema.Schema{
                         Type:       schema.TypeBool,
-                        Required:   true,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "passwordless_sudo":  &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "allow_public_key":  &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "public_key":  &schema.Schema{
+                        Type:       schema.TypeString,
+                        Required:   false,
+                        Optional:   true,
                     },
                 },
                 SchemaVersion:  1,
@@ -75,6 +93,9 @@ func CreateSystemUser(d *schema.ResourceData, meta interface{}) error {
         Email:              d.Get("email").(string),
         Password:           d.Get("password").(string),
         Sudo:               d.Get("sudo").(bool),
+        PasswordlessSudo:   d.Get("passwordless_sudo").(bool),
+        AllowPublicKey:     d.Get("allow_public_key").(bool),
+        PublicKey:          strings.Replace(d.Get("public_key").(string), "\n", "", -1),
         Activated:          true,
         ExternallyManaged:  false,
     }
@@ -107,6 +128,9 @@ func UpdateSystemUser(d *schema.ResourceData, meta interface{}) error {
     jcUser.Email =              d.Get("email").(string)
     jcUser.Password =           d.Get("password").(string)
     jcUser.Sudo  =              d.Get("sudo").(bool)
+    jcUser.PasswordlessSudo =   d.Get("passwordless_sudo").(bool)
+    jcUser.AllowPublicKey =     d.Get("allow_public_key").(bool)
+    jcUser.PublicKey =          strings.Replace(d.Get("public_key").(string), "\n", "", -1)
     jcUser.Activated =          true
     jcUser.ExternallyManaged =  false
 

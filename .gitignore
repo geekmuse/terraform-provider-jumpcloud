@@ -3,3 +3,4 @@
 **brad**
 .DS_Store
 terraform-provider-jumpcloud
+.main.tf

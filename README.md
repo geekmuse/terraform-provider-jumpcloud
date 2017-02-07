@@ -15,7 +15,8 @@ The following properties are currently implemented on a SystemUser:
 *  LastName
 *  Email
 *  Password
-*  Sudo
+*  Sudo/PasswordlessSudo
+*  AllowPublicKey/PublicKey (the provider strips newlines from the end of the public key, so there's no need to do this within the `.tf` file)
 
 ## Usage
 
@@ -23,4 +24,4 @@ There is a demonstration Terraform implementation in `main.tf`.
 
 ## Roadmap
 
-More properties for SystemUser will be quickly supported, and tests will be implemented thereafter.  A download of the compiled binary plugin reflective of the latest tag in the repo is currently available [here](https://bradcod.es/down/terraform-provider-jumpcloud).
+I'd like to dig into the `ExternallyManaged` feature of SystemUsers next, though I will probably resort to tests first, now that public keys are implemented; then onto systems (which it appears will leverage Terraform's `Import` functionality as a means of creation, then Update/Delete), and SystemUser/System associations.
