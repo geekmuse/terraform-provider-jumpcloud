@@ -67,6 +67,20 @@ func Provider() *schema.Provider {
                 Update:     UpdateSystemUser,
                 Delete:     DeleteSystemUser,
             },
+            // "jumpcloud_system": &schema.Resource{
+            //     Schema: map[string]*schema.Schema{
+            //         "user_name": &schema.Schema{
+            //             Type:       schema.TypeString,
+            //             Required:   true,
+            //             ForceNew:   true,
+            //         },
+            //     },
+            //     SchemaVersion:  1,
+            //     Create:     CreateSystem,
+            //     Read:       ReadSystem,
+            //     Update:     UpdateSystem,
+            //     Delete:     DeleteSystem,
+            // },
         },
         Schema:         map[string]*schema.Schema{
             "api_key": &schema.Schema{
