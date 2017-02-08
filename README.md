@@ -6,7 +6,7 @@ As time goes on, this will implement JumpCloud's API as exposed through their [G
 
 ## Where It Stands
 
-Currently implemented is the creation, update, and deletion of users using the [SystemUsers interface](https://github.com/TheJumpCloud/JumpCloudAPI#system-users).
+Currently implemented is the creation, update, read, deletion, and import of users using the [SystemUsers interface](https://github.com/TheJumpCloud/JumpCloudAPI#system-users).
 
 The following properties are currently implemented on a SystemUser:
 
@@ -17,6 +17,8 @@ The following properties are currently implemented on a SystemUser:
 *  Password
 *  Sudo/PasswordlessSudo
 *  AllowPublicKey/PublicKey
+
+Importing users requires the manual addition of the `allow_public_key` and `password` fields to the state file, since they are not currently supported by the API.  An alternative to editing the state file is simply adding the parameters to the resource and running a `plan/apply`.  This will update those values with the service (and will also add them to the state file).
 
 ## Usage
 
