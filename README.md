@@ -16,7 +16,7 @@ The following properties are currently implemented on a SystemUser:
 *  Email
 *  Password
 *  Sudo/PasswordlessSudo
-*  AllowPublicKey/PublicKey (the provider strips newlines from the end of the public key, so there's no need to do this within the `.tf` file)
+*  AllowPublicKey/PublicKey
 
 ## Usage
 
