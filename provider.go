@@ -3,7 +3,7 @@ package main
 
 import (
     "github.com/hashicorp/terraform/helper/schema"
-    "github.com/geekmuse/jcapi"
+    "github.com/m4rkw/jcapi"
 )
 
 const (
