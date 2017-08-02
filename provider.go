@@ -123,6 +123,13 @@ func Provider() *schema.Provider {
                         Type:       schema.TypeString,
                         Required:   false,
                         Optional:   true,
+                        ForceNew:   true,
+                    },
+                    "group_gid": &schema.Schema{
+                        Type:       schema.TypeString,
+                        Required:   false,
+                        Optional:   true,
+                        ForceNew:   true,
                     },
                     "expiration_time": &schema.Schema{
                         Type:       schema.TypeList,
@@ -135,7 +142,12 @@ func Provider() *schema.Provider {
                         Required:   false,
                         Optional:   true,
                     },
-                    "selected":  &schema.Schema{
+                    "selected": &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "sendtoldap": &schema.Schema{
                         Type:       schema.TypeBool,
                         Required:   false,
                         Optional:   true,
@@ -301,9 +313,11 @@ func CreateTag(d *schema.ResourceData, meta interface{}) error {
   jcTag := jcapi.JCTag{
       Name:               d.Get("name").(string),
       GroupName:          d.Get("group_name").(string),
+      GroupGid:           d.Get("group_gid").(string),
       //ExpirationTime:     d.Get("expiration_time").(string),
       //Expired:            d.Get("expired").(bool),
       //Selected:           d.Get("selected").(bool),
+      SendToLDAP:          d.Get("sendtoldap").(bool),
   }
 
   tagId, err := meta.(*jcapi.JCAPI).AddUpdateTag(2, jcTag)
@@ -326,9 +340,11 @@ func ReadTag(d *schema.ResourceData, meta interface{}) error {
 
     d.Set("name", jcTag.Name)
     d.Set("group_name", jcTag.GroupName)
+    d.Set("group_gid", jcTag.GroupGid)
     d.Set("expiration_time", jcTag.ExpirationTime)
     d.Set("expired", jcTag.Expired)
     d.Set("selected", jcTag.Selected)
+    d.Set("sendtoldap", jcTag.SendToLDAP)
 
     return nil
 }
@@ -341,10 +357,12 @@ func UpdateTag(d *schema.ResourceData, meta interface{}) error {
     }
 
     jcTag.Name							=	d.Get("name").(string)
-    //jcTag.GroupName					=	d.Get("group_name").(string)
-    //jcTag.ExpirationTime		=	d.Get("expiration_time").(string)
-    //jcTag.Expired						= d.Get("expired").(bool)
-    //jcTag.Selected					=	d.Get("selected").(bool)
+    jcTag.GroupName						=	d.Get("group_name").(string)
+    jcTag.GroupGid						=	d.Get("group_gid").(string)
+    //jcTag.ExpirationTime					=	d.Get("expiration_time").(string)
+    //jcTag.Expired						=	d.Get("expired").(bool)
+    //jcTag.Selected						=	d.Get("selected").(bool)
+    jcTag.SendToLDAP						=	d.Get("sendtoldap").(bool)
 
     tagId, err := meta.(*jcapi.JCAPI).AddUpdateTag(3, jcTag)
 
