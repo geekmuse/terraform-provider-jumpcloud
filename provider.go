@@ -112,6 +112,56 @@ func Provider() *schema.Provider {
                 //     State: ImportSystem,
                 // },
             },
+            "jumpcloud_tag": &schema.Resource{
+                Schema: map[string]*schema.Schema{
+                    "name": &schema.Schema{
+                        Type:       schema.TypeString,
+                        Required:   true,
+                        ForceNew:   false,
+                    },
+                    "group_name": &schema.Schema{
+                        Type:       schema.TypeString,
+                        Required:   false,
+                        Optional:   true,
+                        ForceNew:   true,
+                    },
+                    "group_gid": &schema.Schema{
+                        Type:       schema.TypeString,
+                        Required:   false,
+                        Optional:   true,
+                        ForceNew:   true,
+                    },
+                    "expiration_time": &schema.Schema{
+                        Type:       schema.TypeList,
+                        Elem:       &schema.Schema{Type: schema.TypeString},
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "expired":  &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "selected": &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                    "sendtoldap": &schema.Schema{
+                        Type:       schema.TypeBool,
+                        Required:   false,
+                        Optional:   true,
+                    },
+                },
+                SchemaVersion:  1,
+                Create:     CreateTag,
+                Read:       ReadTag,
+                Update:     UpdateTag,
+                Delete:     DeleteTag,
+                Importer:   &schema.ResourceImporter{
+                    State: ImportTag,
+                },
+            },
         },
         Schema:         map[string]*schema.Schema{
             "api_key": &schema.Schema{
@@ -259,3 +309,94 @@ func DeleteSystem(d *schema.ResourceData, meta interface{}) error {
     return nil
 }
 
+func CreateTag(d *schema.ResourceData, meta interface{}) error {
+  jcTag := jcapi.JCTag{
+      Name:               d.Get("name").(string),
+      GroupName:          d.Get("group_name").(string),
+      GroupGid:           d.Get("group_gid").(string),
+      //ExpirationTime:     d.Get("expiration_time").(string),
+      //Expired:            d.Get("expired").(bool),
+      //Selected:           d.Get("selected").(bool),
+      SendToLDAP:          d.Get("sendtoldap").(bool),
+  }
+
+  tagId, err := meta.(*jcapi.JCAPI).AddUpdateTag(2, jcTag)
+
+  if err != nil {
+      return err
+  }
+
+  d.SetId(tagId)
+
+  return nil
+}
+
+func ReadTag(d *schema.ResourceData, meta interface{}) error {
+    jcTag, err := meta.(*jcapi.JCAPI).GetTagByName(d.Id())
+
+    if err != nil {
+        return err
+    }
+
+    d.Set("name", jcTag.Name)
+    d.Set("group_name", jcTag.GroupName)
+    d.Set("group_gid", jcTag.GroupGid)
+    d.Set("expiration_time", jcTag.ExpirationTime)
+    d.Set("expired", jcTag.Expired)
+    d.Set("selected", jcTag.Selected)
+    d.Set("sendtoldap", jcTag.SendToLDAP)
+
+    return nil
+}
+
+func UpdateTag(d *schema.ResourceData, meta interface{}) error {
+    jcTag, err := meta.(*jcapi.JCAPI).GetTagByName(d.Id())
+
+    if err != nil {
+        return err
+    }
+
+    jcTag.Name							=	d.Get("name").(string)
+    jcTag.GroupName						=	d.Get("group_name").(string)
+    jcTag.GroupGid						=	d.Get("group_gid").(string)
+    //jcTag.ExpirationTime					=	d.Get("expiration_time").(string)
+    //jcTag.Expired						=	d.Get("expired").(bool)
+    //jcTag.Selected						=	d.Get("selected").(bool)
+    jcTag.SendToLDAP						=	d.Get("sendtoldap").(bool)
+
+    tagId, err := meta.(*jcapi.JCAPI).AddUpdateTag(3, jcTag)
+
+    if err != nil {
+        return err
+    }
+
+    d.SetId(tagId)
+
+    return nil
+}
+
+func DeleteTag(d *schema.ResourceData, meta interface{}) error {
+    jcTag, err := meta.(*jcapi.JCAPI).GetTagByName(d.Id())
+
+    if err != nil {
+        return err
+    }
+
+    err = meta.(*jcapi.JCAPI).DeleteTag(jcTag)
+
+    if err != nil {
+        return err
+    }
+
+    d.SetId("")
+
+    return nil
+}
+
+func ImportTag(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+    if err := ReadTag(d, meta); err != nil {
+        return nil, err
+    }
+
+    return []*schema.ResourceData{d}, nil
+}
